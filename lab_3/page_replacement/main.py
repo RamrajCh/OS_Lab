@@ -5,7 +5,7 @@ from second_chance import SecondChance
 
 if __name__ == "__main__":
     reference = input("Give page reference in order: \t").split()
-    _frame = input("Give Memory Partition in order: \t").split()
+    _frame = input("Give required frames in order: \t").split()
 
     frame = [int(_) for _ in _frame]
 

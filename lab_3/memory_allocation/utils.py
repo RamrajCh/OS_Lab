@@ -1,7 +1,6 @@
-import copy
 import pandas as pd
 # Function to insert row in the dataframe
-def Insert_row(row_number, df, row_value):
+def Insert_row(row_number:int, df:pd.DataFrame, row_value:list) -> pd.DataFrame:
     # Starting value of upper half
     start_upper = 0
    
@@ -39,7 +38,7 @@ def Insert_row(row_number, df, row_value):
     return df
 
 
-def check_size_invalidity(p_s, df):
+def check_size_invalidity(p_s:int, df:pd.DataFrame) -> bool:
     temp = pd.DataFrame({"Partition": [], "Size": []})
     for i, M in df.iterrows():
         if not M["Status"] == 'allocated':

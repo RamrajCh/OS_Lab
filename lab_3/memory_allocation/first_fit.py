@@ -5,12 +5,12 @@ from prettytable import PrettyTable
 class FirstFit():
     def __init__(self, partitions:list, processes:list):
         process = {
-            "Processes": [f"p{i+1}" for i in range(len(processes))], 
+            "Processes": [f"P{i+1}" for i in range(len(processes))], 
             "Size": processes,
             }
         
         partition = {
-            "Partition": [f"m{i+1}" for i in range(len(partitions))],
+            "Partition": [f"M{i+1}" for i in range(len(partitions))],
             "Size": partitions,
         } 
         
@@ -27,7 +27,7 @@ class FirstFit():
 
             # check if size of process exceeds max memory size, if yes, process cannot be allocated
             if check_size_invalidity(p_s, self.allocation):
-                print(f"Process {p}(size {p_s}) cannot be allocated.")
+                print(f"\nProcess {p}(size {p_s}) cannot be allocated.")
                 x = PrettyTable()
                 x.field_names = list(self.allocation["Partition"])
                 x.add_row(list(self.allocation["Size"]))
@@ -56,9 +56,9 @@ class FirstFit():
                 # if p_s less than m_s, create hole after the allocation and break the loop 
                 if p_s < m_s:
                     hole_size = m_s - p_s
-                    hole = [f"h{p[-1]}", hole_size, 'hole']
+                    hole = [f"H{p[-1]}", hole_size, 'hole']
                     self.allocation = Insert_row(i+1, self.allocation, hole)
-                print(f"Process {p}(size {p_s}) is allocated in memory {m}(size {m_s}).")
+                print(f"\nProcess {p}(size {p_s}) is allocated in memory {m}(size {m_s}).")
                 x = PrettyTable()
                 x.field_names = list(self.allocation["Partition"])
                 x.add_row(list(self.allocation["Size"]))
@@ -68,7 +68,7 @@ class FirstFit():
 if __name__ == "__main__":
     partition = [300, 600, 350, 200, 750, 125]
 
-    processes = [115, 500, 358, 500, 400]
+    processes = [115, 500, 358, 200, 375]
 
     ff = FirstFit(partition, processes)
     ff.algorithm()

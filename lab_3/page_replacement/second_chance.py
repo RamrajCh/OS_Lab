@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import free_frame, get_frame_list
+from utils import free_frame
 from prettytable import PrettyTable
 
 class SecondChance():
@@ -12,8 +12,9 @@ class SecondChance():
         self.frame = pd.DataFrame({"Frame": S, "Status": Status, "Reference": Reference})
         self.page_fault = 0
         self.table = PrettyTable()
+        self.table.add_column("page_reference ->", [f"frame {_ + 1} ->" for _ in range(self.frame_size)] + ['',])
     
-    def get_victim(self, ref):
+    def replace_victim(self, ref):
         sc_index = []
         max = self.frame_size - 1
         while(max >= 0):
@@ -35,7 +36,6 @@ class SecondChance():
     def update_status_sc(self, i_victim, sc_index):
         i_rest = [_ for _ in range(self.frame_size)]
         i_rest.remove(i_victim)
-        # print(i_rest)
         if sc_index:
             for sc in sc_index:
                 i_rest.remove(sc)
@@ -75,9 +75,7 @@ class SecondChance():
             s_ref, i_ref = self.check_reference_avaibility(ref)
             if not s_ref == -1:
                 self.frame.at[i_ref, "Reference"] = 1
-                self.table.add_column(ref, ['' for _ in range(self.frame_size)])
-                # print(f"{ref} -> {i_ref}")
-                # print(self.frame)
+                self.table.add_column(ref, self.get_frame_list() + [""])
                 continue
 
             # check if there are any free frame i.e. frame["Frame"] = None and skip
@@ -88,24 +86,26 @@ class SecondChance():
                 self.frame.at[i_frame, "Status"] = 0
                 self.frame.at[i_frame, "Reference"] = 0
                 self.page_fault += 1
-                self.table.add_column(ref, self.get_frame_list())
-                # print(ref)
-                # print(self.frame)
+                self.table.add_column(ref, self.get_frame_list()+ ["pf"])
                 continue
             
             # If no free frame, select victim
-            self.get_victim(ref)
-            self.table.add_column(ref, self.get_frame_list())
-            # print(ref)
-            # print(self.frame)
+            self.replace_victim(ref)
+            self.table.add_column(ref, self.get_frame_list() + ["pf"])
         print(self.table)
         print(f"Total Page Fault: {self.page_fault}\n")
 
             
 if __name__ == '__main__':
-    # pr = ['7', '2', '3', '1', '2', '5', '3', '4', '6', '7', '7', '1', '0', '5', '4', '6', '2', '3', '0', '1']
-    pr = '0 4 1 4 2 4 3 4 2 4 0 4 1 4 2 4 3 4'.split()
-    pf = 3
+    #pr = ['7', '2', '3', '1', '2', '5', '3', '4', '6', '7', '7', '1', '0', '5', '4', '6', '2', '3', '0', '1']
+    pr = '0 4 1 4 2 4 3 4 2 4 0 7 1 4 8 4 3 4'.split()
+    pf1 = 3
+    pf2 = 5
 
-    sc = SecondChance(pr, pf)
-    sc.algorithm()
+    print(f"\n Frames = {pf1}\n")
+    sc1 = SecondChance(pr, pf1)
+    sc1.algorithm()
+
+    print(f"\n Frames = {pf2}\n")
+    sc2 = SecondChance(pr, pf2)
+    sc2.algorithm()

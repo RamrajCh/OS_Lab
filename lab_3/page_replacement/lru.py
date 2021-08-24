@@ -11,6 +11,7 @@ class LRU():
         self.frame = pd.DataFrame({"Frame": S, "Status": Status})
         self.page_fault = 0
         self.table = PrettyTable()
+        self.table.add_column("page_reference ->", [f"frame {_ + 1} ->" for _ in range(self.frame_size)] + ['',])
     
     def get_victim(self):
         for i, F in self.frame.iterrows():
@@ -43,9 +44,7 @@ class LRU():
             s_ref = check_reference_avaibility(self.frame, ref)
             if not s_ref == None:
                 self.update_status(s_ref)
-                self.table.add_column(ref, ['' for _ in range(self.frame_size)])
-                # print(f"{ref} -> {i_ref}")
-                # print(self.frame)
+                self.table.add_column(ref, get_frame_list(self.frame) + [""])
                 continue
 
             # check if there are any free frame i.e. frame["Frame"] = None and skip
@@ -55,9 +54,7 @@ class LRU():
                 self.frame.at[i_frame, "Frame"] = ref
                 self.frame.at[i_frame, "Status"] = 0
                 self.page_fault += 1
-                self.table.add_column(ref, get_frame_list(self.frame))
-                # print(ref)
-                # print(self.frame)
+                self.table.add_column(ref, get_frame_list(self.frame) + ["pf"])
                 continue
             
             # If no free frame, select victim
@@ -65,9 +62,7 @@ class LRU():
             self.update_status()
             self.frame.at[i_victim, "Frame"] = ref
             self.page_fault += 1
-            self.table.add_column(ref, get_frame_list(self.frame))
-            # print(ref)
-            # print(self.frame)
+            self.table.add_column(ref, get_frame_list(self.frame)+ ["pf"])
         print(self.table)
         print(f"Total Page Fault: {self.page_fault}\n")
 
@@ -80,8 +75,14 @@ class LRU():
 
 
 if __name__ == '__main__':
-    pr = ['7', '2', '3', '1', '2', '5', '3', '4', '6', '7', '7', '1', '0', '5', '4', '6', '2', '3', '0', '1']
-    pf = 3
+    pr = '0 4 1 4 2 4 3 4 2 4 0 7 1 4 8 4 3 4'.split()
+    pf1 = 3
+    pf2 = 5
 
-    lru = LRU(pr, pf)
-    lru.algorithm()
+    print(f"\n Frames = {pf1}\n")
+    lru1 = LRU(pr, pf1)
+    lru1.algorithm()
+
+    print(f"\n Frames = {pf2}\n")
+    lru2 = LRU(pr, pf2)
+    lru2.algorithm()

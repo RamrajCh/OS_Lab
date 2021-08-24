@@ -1,4 +1,3 @@
-from os import stat_result
 import pandas as pd
 from utils import get_frame_list
 from prettytable import PrettyTable
@@ -22,6 +21,7 @@ class Optimal():
         self.frame = pd.DataFrame({"Frame": S, "Next": Next})
         self.page_fault = 0
         self.table = PrettyTable()
+        self.table.add_column("page_reference ->", [f"frame {_ + 1} ->" for _ in range(self.frame_size)] + ['',])
     
     def get_victim(self):
         min = self.frame["Next"].min()
@@ -56,9 +56,7 @@ class Optimal():
             if not i_ref == None:
                 self.update_Next()
                 self.frame.at[i_ref, "Next"] = Next
-                self.table.add_column(ref, ['' for _ in range(self.frame_size)])
-                # print(f"{ref} -> {i_ref}")
-                # print(self.frame)
+                self.table.add_column(ref, get_frame_list(self.frame) + [""])
                 continue
 
             # check if there are any free frame i.e. frame["Frame"] = None, then, take that frame and skip
@@ -68,9 +66,7 @@ class Optimal():
                 self.frame.at[i_frame, "Frame"] = ref
                 self.frame.at[i_frame, "Next"] = Next
                 self.page_fault += 1
-                self.table.add_column(ref, get_frame_list(self.frame))
-                # print(ref)
-                # print(self.frame)
+                self.table.add_column(ref, get_frame_list(self.frame) + ["pf"])
                 continue
             
             # If no free frame, select victim
@@ -79,17 +75,20 @@ class Optimal():
             self.frame.at[i_victim, "Frame"] = ref
             self.frame.at[i_victim, "Next"] = Next
             self.page_fault += 1
-            self.table.add_column(ref, get_frame_list(self.frame))
-            # print(ref)
-            # print(self.frame)
+            self.table.add_column(ref, get_frame_list(self.frame) + ["pf"])
         print(self.table)
         print(f"Total Page Fault: {self.page_fault}\n")
 
             
 if __name__ == '__main__':
-    pr = '1 2 3 4 2 1 5 6 2 1 2 3 7 6 3 2 1 2 3 6'.split()
-    # pr = ['7', '2', '3', '1', '2', '5', '3', '4', '6', '7', '7', '1', '0', '5', '4', '6', '2', '3', '0', '1']
-    pf = 3
+    pr = '0 4 1 4 2 4 3 4 2 4 0 7 1 4 8 4 3 4'.split()
+    pf1 = 3
+    pf2 = 5
 
-    optimal = Optimal(pr, pf)
-    optimal.algorithm()
+    print(f"\n Frames = {pf1}\n")
+    optimal1 = Optimal(pr, pf1)
+    optimal1.algorithm()
+
+    print(f"\n Frames = {pf2}\n")
+    optimal2 = Optimal(pr, pf2)
+    optimal2.algorithm()
