@@ -1,0 +1,15 @@
+  process  cpu_arrival_time  cpu_leave_time
+0      P1               0.0            50.0
+1      P2              50.0            70.0
+2      P3              70.0           120.0
+3      P4             120.0           160.0
+4      P5             160.0           210.0
+5      P3             210.0           260.0
+  process  waiting_time turnaround_time
+0      P1             0              50
+1      P2            30              50
+2      P3           120             220
+3      P4            60             100
+4      P5            80             130
+Average waiting time = 58.0
+Average turnaround time = 110.0
